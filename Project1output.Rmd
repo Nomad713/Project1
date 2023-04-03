@@ -29,10 +29,7 @@ Project Objectives .....................................1
 We will be analyzing 2 data sets for 2019 Novel Coronavirus operated by the John Hopkins University Center for Systems Science and Engineering (JHU CSSE).Data includes daily time series CSV summary tables, including confirmations, recoveries, and deaths. Country/region are countries/regions that conform to World Health Organization (WHO). Lat and Long refer to coordinates references for the user. Date fiends are stored in MM/DD/YYYY format.  
 We will be using the data sets relating to confirmations and deaths
 
-```{r}
-library(HelpersMG)
-wget(https://github.com/CSSEGISandData/COVID-19/blob/4360e50239b4eb6b22f3a1759323748f36752177/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv)
-```
+
 
 ## Project Objectives
 
