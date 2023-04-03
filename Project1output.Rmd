@@ -30,6 +30,9 @@ We will be analyzing 2 data sets for 2019 Novel Coronavirus operated by the John
 We will be using the data sets relating to confirmations and deaths
 
 
+```{r}
+confirmed_cases <- read.csv(wget(https://github.com/Nomad713/Project1/blob/1eac37d75c1f38a727b9763afe222a5125b7ae7a/time_series_covid19_confirmed_global.csv))
+```
 
 ## Project Objectives
 
