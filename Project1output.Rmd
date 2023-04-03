@@ -5,6 +5,7 @@ Partner: Queen Caoile
 04/03/2023  
 </center>
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -29,9 +30,11 @@ Project Objectives .....................................1
 We will be analyzing 2 data sets for 2019 Novel Coronavirus operated by the John Hopkins University Center for Systems Science and Engineering (JHU CSSE).Data includes daily time series CSV summary tables, including confirmations, recoveries, and deaths. Country/region are countries/regions that conform to World Health Organization (WHO). Lat and Long refer to coordinates references for the user. Date fiends are stored in MM/DD/YYYY format.  
 We will be using the data sets relating to confirmations and deaths
 
-
 ```{r}
-confirmed_cases <- read.csv(wget(https://github.com/Nomad713/Project1/blob/1eac37d75c1f38a727b9763afe222a5125b7ae7a/time_series_covid19_confirmed_global.csv))
+#read in raw csvs into data frames. These files are created by using the wget command in terminal with links to original data set from John Hopkins.
+library(readr)
+confirmed_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/main/time_series_covid19_confirmed_global.csv")
+deaths_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/main/time_series_covid19_deaths_global.csv")
 ```
 
 ## Project Objectives
