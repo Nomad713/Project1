@@ -35,17 +35,33 @@ The contents of this document contains the analysis of a team of data scientists
 We will be analyzing 2 data sets for 2019 Novel Coronavirus operated by the John Hopkins University Center for Systems Science and Engineering (JHU CSSE).Data includes daily time series CSV summary tables, including confirmations, recoveries, and deaths. Country/region are countries/regions that conform to World Health Organization (WHO). Lat and Long refer to coordinates references for the user. Date fiends are stored in MM/DD/YYYY format.  
 We will be using the data sets relating to confirmations and deaths
 
-```{r}
+```{r echo=FALSE}
 #read in raw csvs into data frames. These files are created by using the wget command in terminal with links to original data set from John Hopkins.
 library(tidyverse)
 confirmed_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/main/time_series_covid19_confirmed_global.csv")
 deaths_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/main/time_series_covid19_deaths_global.csv")
-head(deaths_global, 2)
 ```
 
 ## Project Objectives
 ### Objective 1
-```{r ob1}
+```{r}
+find_origin = function(df1, df2){
+  for(i in 1:ncol(df1)){
+    if(df1[i,5] %in% max(df1[, 5])){
+      origin_confirmed <- c(df1[i,1])
+    }
+  }
+  print(paste(origin_confirmed, "is the origin of confirmed cases"))
+  for (i in 1:ncol(df2)){
+    if(df2[i,5] %in% max(df2[, 5])){
+      origin_death <- c(df2[i,1])
+    }
+  }
+  print(paste(origin_death, "is the origin of deaths"))
+}
+
+find_origin(confirmed_global, deaths_global)
+
 ```
 
 
