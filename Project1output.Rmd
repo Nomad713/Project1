@@ -32,9 +32,10 @@ We will be using the data sets relating to confirmations and deaths
 
 ```{r}
 #read in raw csvs into data frames. These files are created by using the wget command in terminal with links to original data set from John Hopkins.
-library(readr)
+library(tidyverse)
 confirmed_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/main/time_series_covid19_confirmed_global.csv")
 deaths_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/main/time_series_covid19_deaths_global.csv")
+head(deaths_global, 2)
 ```
 
 ## Project Objectives
