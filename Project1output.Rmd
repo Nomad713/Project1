@@ -43,7 +43,7 @@ deaths_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/m
 ```
 
 ## Project Objectives
-
+### Objective 1
 ```{r ob1}
 ```
 
