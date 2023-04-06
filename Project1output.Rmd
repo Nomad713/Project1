@@ -43,10 +43,64 @@ deaths_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/m
 ```
 
 ## Project Objectives
-### Objective 1
+### Objective 1 - Determine where COVID-19 originated from
 ```{r ob1}
+
+find_origin = function(df1, df2){
+  #iterate through the first data frame and find the greatest number of confirmed cases on the first recorded day in the data set
+  for(i in 1:ncol(df1)){
+    if(df1[i,5] %in% max(df1[, 5])){
+      origin_confirmed <- c(df1[i,1])
+    }
+  }
+  print(paste(origin_confirmed, "has the greatest number of confirmed cases on the first recorded day in the data set."))
+  
+  #iterate through the second data frame and find the greatest number of deaths on the first recorded day in the data set
+  for (i in 1:ncol(df2)){
+    if(df2[i,5] %in% max(df2[, 5])){
+      origin_death <- c(df2[i,1])
+    }
+  }
+  print(paste(origin_death, "has the greatest number of confirmed deaths on the first recorded day in the data set."))
+  #If the greatest number of confirmations and deaths on the first recorded day in the data set are the same, that is the origin of COVID-19
+  if(origin_confirmed==origin_death){
+    origin=origin_confirmed
+    print(paste(origin, "is predicted to be where COVID-19 originated from."))
+  }
+}
+
+find_origin(confirmed_global, deaths_global)
 ```
 
+### Objective 2 - Where is the most recent area to have a first confirmed case?
+```{r ob2}
+#create a subset of confirmed_global that only contains date information
+dates <- confirmed_global[, 5:ncol(confirmed_global)]
+# find the date of the first confirmed case for each country
+first_case_dates <- apply(dates, 1, function(x) {
+  # find the index of the first element in each row that is greater than 0
+  first_case_index <- which(x > 0)[1]
+  # if there is a first case index, return the corresponding column name
+  if (!is.na(first_case_index)) {
+    colnames(dates)[first_case_index]
+  } else {
+    # if there is no first case index, return NA
+    NA
+  }
+})
+# create a new data frame with the first case dates for each areas
+area <- confirmed_global[, 1:2]
+area$first_case <- first_case_dates
+print(area)
 
+# filter out areas with no confirmed cases
+area <- area[!is.na(area$first_case),]
+
+# sort the first cases by date in descending order
+area <- area[order(area$first_case, decreasing = TRUE),]
+print(area)
+# print the most recent country to have a first confirmed case
+#cat("The most recent country to have a first confirmed case is", first_cases$country[1], "on", first_cases$date[1], "\n")
+```
 
 
