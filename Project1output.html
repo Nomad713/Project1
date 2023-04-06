@@ -393,6 +393,7 @@ are countries/regions that conform to World Health Organization (WHO).
 Lat and Long refer to coordinates references for the user. Date fiends
 are stored in MM/DD/YYYY format.<br />
 We will be using the data sets relating to confirmations and deaths</p>
+<<<<<<< HEAD
 <pre class="r"><code>#read in raw csvs into data frames. These files are created by using the wget command in terminal with links to original data set from John Hopkins.
 library(readr)</code></pre>
 <pre><code>## Warning: package &#39;readr&#39; was built under R version 4.2.3</code></pre>
@@ -405,19 +406,48 @@ deaths_global &lt;- read.csv(&quot;https://raw.githubusercontent.com/Nomad713/Pr
 <h3>Objective 1 - Determine where COVID-19 originated from</h3>
 <pre class="r"><code>find_origin = function(df1, df2){
   #iterate through the first data frame and find the greatest number of confirmed cases on the first recorded day in the data set
+=======
+<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## Warning: package &#39;forcats&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## Warning: package &#39;lubridate&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.1     ✔ readr     2.1.4
+## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+## ✔ ggplot2   3.4.2     ✔ tibble    3.2.0
+## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+## ✔ purrr     1.0.1     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
+</div>
+<div id="project-objectives" class="section level2">
+<h2>Project Objectives</h2>
+<div id="objective-1" class="section level3">
+<h3>Objective 1</h3>
+<pre class="r"><code>find_origin = function(df1, df2){
+>>>>>>> e7df603c7a25bcc99ba656ea39c288a148b61f9e
   for(i in 1:ncol(df1)){
     if(df1[i,5] %in% max(df1[, 5])){
       origin_confirmed &lt;- c(df1[i,1])
     }
   }
+<<<<<<< HEAD
   print(paste(origin_confirmed, &quot;has the greatest number of confirmed cases on the first recorded day in the data set.&quot;))
   
   #iterate through the second data frame and find the greatest number of deaths on the first recorded day in the data set
+=======
+  print(paste(origin_confirmed, &quot;is the origin of confirmed cases&quot;))
+>>>>>>> e7df603c7a25bcc99ba656ea39c288a148b61f9e
   for (i in 1:ncol(df2)){
     if(df2[i,5] %in% max(df2[, 5])){
       origin_death &lt;- c(df2[i,1])
     }
   }
+<<<<<<< HEAD
   print(paste(origin_death, &quot;has the greatest number of confirmed deaths on the first recorded day in the data set.&quot;))
   #If the greatest number of confirmations and deaths on the first recorded day in the data set are the same, that is the origin of COVID-19
   if(origin_confirmed==origin_death){
@@ -1618,6 +1648,14 @@ print(area)</code></pre>
 ## 187                       Micronesia   X1.21.21</code></pre>
 <pre class="r"><code># print the most recent country to have a first confirmed case
 #cat(&quot;The most recent country to have a first confirmed case is&quot;, first_cases$country[1], &quot;on&quot;, first_cases$date[1], &quot;\n&quot;)</code></pre>
+=======
+  print(paste(origin_death, &quot;is the origin of deaths&quot;))
+}
+
+find_origin(confirmed_global, deaths_global)</code></pre>
+<pre><code>## [1] &quot;Hubei is the origin of confirmed cases&quot;
+## [1] &quot;Hubei is the origin of deaths&quot;</code></pre>
+>>>>>>> e7df603c7a25bcc99ba656ea39c288a148b61f9e
 </div>
 </div>
 </div>
