@@ -112,13 +112,9 @@ area <- area[order(area$first_case, decreasing = TRUE),]
 print(area)
 # print the most recent country to have a first confirmed case
 #cat("The most recent country to have a first confirmed case is", first_cases$country[1], "on", first_cases$date[1], "\n")
-=======
-  print(paste(origin_death, "is the origin of deaths"))
+  
 }
 
-find_origin(confirmed_global, deaths_global)
-
->>>>>>> e7df603c7a25bcc99ba656ea39c288a148b61f9e
 ```
 
 
