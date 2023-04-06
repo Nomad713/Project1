@@ -436,6 +436,7 @@ find_origin(confirmed_global, deaths_global)</code></pre>
 confirmed case?</h3>
 <pre class="r"><code>#create a subset of confirmed_global that only contains date information
 dates &lt;- confirmed_global[, 5:ncol(confirmed_global)]
+
 # find the date of the first confirmed case for each country
 first_case_dates &lt;- apply(dates, 1, function(x) {
   # find the index of the first element in each row that is greater than 0
@@ -448,9 +449,12 @@ first_case_dates &lt;- apply(dates, 1, function(x) {
     NA
   }
 })
+
+# format text dates to be date data types
 first_case_dates &lt;- as.Date(first_case_dates, format = &quot;X%m.%d.%y&quot;)
+
 # create a new data frame with the first case dates for each areas
-area &lt;- confirmed_global[, 1:2]
+area &lt;- confirmed_global[, 1:4]
 area$first_case &lt;- first_case_dates
 
 # filter out areas with no confirmed cases
@@ -458,11 +462,112 @@ area &lt;- area[!is.na(area$first_case),]
 
 # sort the first cases by date in descending order
 area &lt;- area[order(area$first_case, decreasing = TRUE),]
-latest_first_case_area &lt;- paste (area[1,1],area[1,2])
-latest_first_case_date &lt;- format(area[1,3], &quot;%m/%d/%Y&quot;)
+
+# most recent area to have a first confirmed case will be first
+recent_area &lt;- paste (area[1,1],area[1,2])
+recent_date &lt;- format(area[1,5], &quot;%m/%d/%Y&quot;)
+recent_long &lt;- area[1,4]
+recent_lat &lt;- area[1,3]
+
 # print the most recent area to have a first confirmed case
-cat(&quot;The most recent area to have a first confirmed case is&quot;, latest_first_case_area,  &quot;on&quot;, latest_first_case_date)</code></pre>
+cat(&quot;The most recent area to have a first confirmed case is&quot;, recent_area,  &quot;on&quot;, recent_date)</code></pre>
 <pre><code>## The most recent area to have a first confirmed case is Pitcairn Islands United Kingdom on 07/20/2022</code></pre>
+</div>
+<div id="objective-3---how-far-away-is-the-most-recent-area-to-have-a-first-confirmed-case-from-where-the-first-confirmed-cases-occurred" class="section level3">
+<h3>Objective 3 - How far away is the most recent area to have a first
+confirmed case from where the first confirmed cases occurred?</h3>
+<pre class="r"><code># Find the earliest date
+earliest_date &lt;- min(area$first_case)
+# Subset the data frame to include only rows with the earliest date
+first_case_location &lt;- subset(area, first_case == earliest_date)
+
+# Create a new data frame to store the distances
+distances_df &lt;- data.frame(location = character(),
+                            distance_miles = numeric(),
+                            stringsAsFactors = FALSE)
+
+# Loop over each row in first_case_location data frame
+for (i in 1:nrow(first_case_location)) {
+  # Get the location and its coordinates
+  location &lt;- paste(first_case_location[i, 1], first_case_location[i, 2], sep = &quot;, &quot;)
+  lat &lt;- first_case_location[i, 3]
+  lon &lt;- first_case_location[i, 4]
+  
+  # Calculate the distance in meters using distm function
+  distance_m &lt;- geosphere::distm(c(recent_long, recent_lat), c(lon, lat))
+  
+  # Convert distance from meters to miles
+  distance_miles &lt;- distance_m / 1609.344
+  
+  # Add the location and distance to the distances_df data frame
+  distances_df &lt;- rbind(distances_df, data.frame(location = location, distance_miles = distance_miles, stringsAsFactors = FALSE))
+}
+
+# Print the table of distances
+print(distances_df)</code></pre>
+<pre><code>##            location distance_miles
+## 1      Anhui, China       8467.698
+## 2    Beijing, China       8585.834
+## 3  Chongqing, China       8997.600
+## 4     Fujian, China       8339.551
+## 5  Guangdong, China       8571.655
+## 6    Guangxi, China       8865.305
+## 7    Guizhou, China       9023.561
+## 8     Hainan, China       8724.352
+## 9      Hebei, China       8597.507
+## 10     Henan, China       8654.094
+## 11     Hubei, China       8746.977
+## 12     Hunan, China       8740.876
+## 13   Jiangsu, China       8353.700
+## 14   Jiangxi, China       8499.821
+## 15  Liaoning, China       8270.182
+## 16     Macau, China       8543.234
+## 17   Ningxia, China       9131.006
+## 18  Shandong, China       8464.061
+## 19  Shanghai, China       8214.890
+## 20    Shanxi, China       8795.074
+## 21   Sichuan, China       9308.470
+## 22   Tianjin, China       8532.495
+## 23    Yunnan, China       9331.862
+## 24  Zhejiang, China       8263.618
+## 25          , Japan       7369.700
+## 26   , Korea, South       7929.699
+## 27        , Taiwan*       8114.355
+## 28       , Thailand       9206.346
+## 29             , US       4790.186</code></pre>
+<pre class="r"><code># Print required statements
+for (i in 1:nrow(distances_df)){
+  cat(recent_area,&quot;is&quot;, distances_df[i,2], &quot; away from&quot;, distances_df[i,1],&quot;\n&quot;)
+}</code></pre>
+<pre><code>## Pitcairn Islands United Kingdom is 8467.698  away from Anhui, China 
+## Pitcairn Islands United Kingdom is 8585.834  away from Beijing, China 
+## Pitcairn Islands United Kingdom is 8997.6  away from Chongqing, China 
+## Pitcairn Islands United Kingdom is 8339.551  away from Fujian, China 
+## Pitcairn Islands United Kingdom is 8571.655  away from Guangdong, China 
+## Pitcairn Islands United Kingdom is 8865.305  away from Guangxi, China 
+## Pitcairn Islands United Kingdom is 9023.561  away from Guizhou, China 
+## Pitcairn Islands United Kingdom is 8724.352  away from Hainan, China 
+## Pitcairn Islands United Kingdom is 8597.507  away from Hebei, China 
+## Pitcairn Islands United Kingdom is 8654.094  away from Henan, China 
+## Pitcairn Islands United Kingdom is 8746.977  away from Hubei, China 
+## Pitcairn Islands United Kingdom is 8740.876  away from Hunan, China 
+## Pitcairn Islands United Kingdom is 8353.7  away from Jiangsu, China 
+## Pitcairn Islands United Kingdom is 8499.821  away from Jiangxi, China 
+## Pitcairn Islands United Kingdom is 8270.182  away from Liaoning, China 
+## Pitcairn Islands United Kingdom is 8543.234  away from Macau, China 
+## Pitcairn Islands United Kingdom is 9131.006  away from Ningxia, China 
+## Pitcairn Islands United Kingdom is 8464.061  away from Shandong, China 
+## Pitcairn Islands United Kingdom is 8214.89  away from Shanghai, China 
+## Pitcairn Islands United Kingdom is 8795.074  away from Shanxi, China 
+## Pitcairn Islands United Kingdom is 9308.47  away from Sichuan, China 
+## Pitcairn Islands United Kingdom is 8532.495  away from Tianjin, China 
+## Pitcairn Islands United Kingdom is 9331.862  away from Yunnan, China 
+## Pitcairn Islands United Kingdom is 8263.618  away from Zhejiang, China 
+## Pitcairn Islands United Kingdom is 7369.7  away from , Japan 
+## Pitcairn Islands United Kingdom is 7929.699  away from , Korea, South 
+## Pitcairn Islands United Kingdom is 8114.355  away from , Taiwan* 
+## Pitcairn Islands United Kingdom is 9206.346  away from , Thailand 
+## Pitcairn Islands United Kingdom is 4790.186  away from , US</code></pre>
 </div>
 </div>
 </div>

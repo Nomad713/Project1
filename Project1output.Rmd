@@ -35,43 +35,32 @@ The contents of this document contains the analysis of a team of data scientists
 We will be analyzing 2 data sets for 2019 Novel Coronavirus operated by the John Hopkins University Center for Systems Science and Engineering (JHU CSSE).Data includes daily time series CSV summary tables, including confirmations, recoveries, and deaths. Country/region are countries/regions that conform to World Health Organization (WHO). Lat and Long refer to coordinates references for the user. Date fiends are stored in MM/DD/YYYY format.  
 We will be using the data sets relating to confirmations and deaths
 
-```{r echo=FALSE}
+```{r}
 #read in raw csvs into data frames. These files are created by using the wget command in terminal with links to original data set from John Hopkins.
-library(tidyverse)
+library(readr)
 confirmed_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/main/time_series_covid19_confirmed_global.csv")
 deaths_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/main/time_series_covid19_deaths_global.csv")
 ```
 
 ## Project Objectives
-<<<<<<< HEAD
 ### Objective 1 - Determine where COVID-19 originated from
 ```{r ob1}
 
 find_origin = function(df1, df2){
   #iterate through the first data frame and find the greatest number of confirmed cases on the first recorded day in the data set
-=======
-### Objective 1
-```{r}
-find_origin = function(df1, df2){
->>>>>>> e7df603c7a25bcc99ba656ea39c288a148b61f9e
   for(i in 1:ncol(df1)){
     if(df1[i,5] %in% max(df1[, 5])){
       origin_confirmed <- c(df1[i,1])
     }
   }
-<<<<<<< HEAD
   print(paste(origin_confirmed, "has the greatest number of confirmed cases on the first recorded day in the data set."))
   
   #iterate through the second data frame and find the greatest number of deaths on the first recorded day in the data set
-=======
-  print(paste(origin_confirmed, "is the origin of confirmed cases"))
->>>>>>> e7df603c7a25bcc99ba656ea39c288a148b61f9e
   for (i in 1:ncol(df2)){
     if(df2[i,5] %in% max(df2[, 5])){
       origin_death <- c(df2[i,1])
     }
   }
-<<<<<<< HEAD
   print(paste(origin_death, "has the greatest number of confirmed deaths on the first recorded day in the data set."))
   #If the greatest number of confirmations and deaths on the first recorded day in the data set are the same, that is the origin of COVID-19
   if(origin_confirmed==origin_death){
@@ -87,6 +76,7 @@ find_origin(confirmed_global, deaths_global)
 ```{r ob2}
 #create a subset of confirmed_global that only contains date information
 dates <- confirmed_global[, 5:ncol(confirmed_global)]
+
 # find the date of the first confirmed case for each country
 first_case_dates <- apply(dates, 1, function(x) {
   # find the index of the first element in each row that is greater than 0
@@ -99,22 +89,64 @@ first_case_dates <- apply(dates, 1, function(x) {
     NA
   }
 })
+
+# format text dates to be date data types
+first_case_dates <- as.Date(first_case_dates, format = "X%m.%d.%y")
+
 # create a new data frame with the first case dates for each areas
-area <- confirmed_global[, 1:2]
+area <- confirmed_global[, 1:4]
 area$first_case <- first_case_dates
-print(area)
 
 # filter out areas with no confirmed cases
 area <- area[!is.na(area$first_case),]
 
 # sort the first cases by date in descending order
 area <- area[order(area$first_case, decreasing = TRUE),]
-print(area)
-# print the most recent country to have a first confirmed case
-#cat("The most recent country to have a first confirmed case is", first_cases$country[1], "on", first_cases$date[1], "\n")
-  
-}
 
+# most recent area to have a first confirmed case will be first
+recent_area <- paste (area[1,1],area[1,2])
+recent_date <- format(area[1,5], "%m/%d/%Y")
+recent_long <- area[1,4]
+recent_lat <- area[1,3]
+
+# print the most recent area to have a first confirmed case
+cat("The most recent area to have a first confirmed case is", recent_area,  "on", recent_date)
 ```
 
+### Objective 3 - How far away is the most recent area to have a first confirmed case from where the first confirmed cases occurred? 
+```{r ob3}
+# Find the earliest date
+earliest_date <- min(area$first_case)
+# Subset the data frame to include only rows with the earliest date
+first_case_location <- subset(area, first_case == earliest_date)
 
+# Create a new data frame to store the distances
+distances_df <- data.frame(location = character(),
+                            distance_miles = numeric(),
+                            stringsAsFactors = FALSE)
+
+# Loop over each row in first_case_location data frame
+for (i in 1:nrow(first_case_location)) {
+  # Get the location and its coordinates
+  location <- paste(first_case_location[i, 1], first_case_location[i, 2], sep = ", ")
+  lat <- first_case_location[i, 3]
+  lon <- first_case_location[i, 4]
+  
+  # Calculate the distance in meters using distm function
+  distance_m <- geosphere::distm(c(recent_long, recent_lat), c(lon, lat))
+  
+  # Convert distance from meters to miles
+  distance_miles <- distance_m / 1609.344
+  
+  # Add the location and distance to the distances_df data frame
+  distances_df <- rbind(distances_df, data.frame(location = location, distance_miles = distance_miles, stringsAsFactors = FALSE))
+}
+
+# Print the table of distances
+print(distances_df)
+
+# Print required statements
+for (i in 1:nrow(distances_df)){
+  cat(recent_area,"is", distances_df[i,2], " away from", distances_df[i,1],"\n")
+}
+```
