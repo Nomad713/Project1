@@ -150,3 +150,25 @@ for (i in 1:nrow(distances_df)){
   cat(recent_area,"is", distances_df[i,2], " away from", distances_df[i,1],"\n")
 }
 ```
+
+
+### Objective 4 - Risk Scores (have been calculated, i will format the section tomorrow)
+```{r}
+library(tidyverse)
+confirmed <- subset(confirmed_global[!is.na(confirmed_global$Lat)], Lat != 0)
+deaths <- subset(deaths_global[!is.na(deaths_global$Lat)], Lat !=0)
+
+
+
+recent_confirmed <- confirmed[ ,ncol(confirmed)]
+recent_deaths <- deaths[ ,ncol(deaths)]
+
+riskscores <- confirmed[, 1:4]
+riskscores$deaths <- recent_deaths
+riskscores$confirmed <- recent_confirmed
+riskscores$risk_score <- round((recent_deaths / recent_confirmed * 100), digits = 4)
+riskscores_sorted <- riskscores[order(riskscores$risk_score, decreasing = FALSE), ]
+riskscores_sorted
+
+
+```
