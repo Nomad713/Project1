@@ -147,6 +147,24 @@ print(distances_df)
 
 # Print required statements
 for (i in 1:nrow(distances_df)){
-  cat(recent_area,"is", distances_df[i,2], " away from", distances_df[i,1],"\n")
+  cat(recent_area,"is", distances_df[i,2], " miles away from", distances_df[i,1],"\n")
 }
+```
+
+### Objective 4 - Risk Scores
+### Objective 5 - Top 5 countries with the most COVID-19 related confirmations and deaths
+```{r ob5}
+# grab the largest number of confirmed COVID-19 confirmed cases
+largest_numbers <- apply(dates,1,max)
+
+# create a new data frame with the first case dates for each areas
+dates$max<-largest_numbers
+print(dates)
+
+# create a new data frame with the first case dates for each areas
+confirmed_country <- confirmed_global[, 2]
+confirmed_country$max <- largest_numbers
+print(confirmed_country)
+# Group by country and summarize confirmed cases
+
 ```
