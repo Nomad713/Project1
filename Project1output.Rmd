@@ -151,6 +151,7 @@ for (i in 1:nrow(distances_df)){
 }
 ```
 
+<<<<<<< HEAD
 ### Objective 4 - Risk Scores
 ### Objective 5 - Top 5 countries with the most COVID-19 related confirmations and deaths
 ```{r ob5}
@@ -168,3 +169,59 @@ print(confirmed_country)
 # Group by country and summarize confirmed cases
 
 ```
+=======
+
+### Objective 4 - Risk Scores 
+```{r}
+library(tidyverse)
+#filter out NA from Lat as well as where Lat = 0
+confirmed <- subset(confirmed_global[!is.na(confirmed_global$Lat)], Lat != 0)
+deaths <- subset(deaths_global[!is.na(deaths_global$Lat)], Lat !=0)
+
+
+#creating vectors with the last recorded values in time which are most up to date
+recent_confirmed <- confirmed[ ,ncol(confirmed)]
+recent_deaths <- deaths[ ,ncol(deaths)]
+
+#create new data frame with the first 4 columns of confirmed data frame
+riskscores <- confirmed[, 1:4]
+
+#add deaths column to data frame
+riskscores$deaths <- recent_deaths
+
+#add confirmed to data frame
+riskscores$confirmed <- recent_confirmed
+
+#calculating and adding risk scores to new data frame
+riskscores$risk_score <- round((recent_deaths / recent_confirmed * 100), digits = 4)
+
+#sort the data frame by
+riskscores_sorted_ascend <- riskscores[order(riskscores$risk_score, -riskscores$confirmed), ]
+#head(riskscores_sorted_ascend, 2)
+
+riskscores_sorted_descend <- riskscores[order(-riskscores$risk_score, -riskscores$confirmed), ]
+#head(riskscores_sorted_descend, 2)
+
+
+```
+Which area of the world currently has the lowest risk score(if more than one, display the one with the most confirmations)?
+``` {r echo=FALSE}
+head(riskscores_sorted_ascend, 2)
+```
+Which area of the world currently has the highest risk score (if more than one, display the one with the most confirmations)?
+``` {r echo=FALSE}
+head(riskscores_sorted_descend, 2)
+```
+How do risk scores in these areas compare to global risk score?
+``` {r}
+globalrisk <- sum(riskscores$deaths) / sum(riskscores$confirmed) * 100
+print(paste(round(globalrisk, 4), "is the global risk score."))
+```
+The global risk score is close to one, which means we have decent care options for people confirmed to have COVID.  
+
+Why might it be helpful to calculate metrics like risk scores for different areas of the world and what would their limitations be (what assumptions does risk score make and what important variables might be left out?)  
+  
+Looking at risk score over the entire globe seems like a bad idea to me. We are not looking at the economic status of countries which would definitely have a large impact on risk scores due to this leading to the quality of healthcare available. It also doesnt consider cultural norms like wearing a mask, I would expect to see lower risk scores in countries where wearing a mask was already a cultural norm. Risk score also is assuming that the data is correct, an easy outliar to see is North Korea, having a risk score of 600. with 0 confirmations 6 people died due to covid related issues...
+
+
+>>>>>>> d8679cdad1eb5e764396c6a4d2d7603e877085b6

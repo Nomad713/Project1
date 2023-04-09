@@ -14171,6 +14171,84 @@ confirmed_country$max &lt;- largest_numbers</code></pre>
 ## [288]    343135    264276</code></pre>
 <pre class="r"><code># Group by country and summarize confirmed cases</code></pre>
 </div>
+<div id="objective-4---risk-scores" class="section level3">
+<h3>Objective 4 - Risk Scores</h3>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## Warning: package &#39;forcats&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## Warning: package &#39;lubridate&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.1     ✔ purrr     1.0.1
+## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+## ✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
+<pre class="r"><code>#filter out NA from Lat as well as where Lat = 0
+confirmed &lt;- subset(confirmed_global[!is.na(confirmed_global$Lat)], Lat != 0)
+deaths &lt;- subset(deaths_global[!is.na(deaths_global$Lat)], Lat !=0)
+
+
+#creating vectors with the last recorded values in time which are most up to date
+recent_confirmed &lt;- confirmed[ ,ncol(confirmed)]
+recent_deaths &lt;- deaths[ ,ncol(deaths)]
+
+#create new data frame with the first 4 columns of confirmed data frame
+riskscores &lt;- confirmed[, 1:4]
+
+#add deaths column to data frame
+riskscores$deaths &lt;- recent_deaths
+
+#add confirmed to data frame
+riskscores$confirmed &lt;- recent_confirmed
+
+#calculating and adding risk scores to new data frame
+riskscores$risk_score &lt;- round((recent_deaths / recent_confirmed * 100), digits = 4)
+
+#sort the data frame by
+riskscores_sorted_ascend &lt;- riskscores[order(riskscores$risk_score, -riskscores$confirmed), ]
+#head(riskscores_sorted_ascend, 2)
+
+riskscores_sorted_descend &lt;- riskscores[order(-riskscores$risk_score, -riskscores$confirmed), ]
+#head(riskscores_sorted_descend, 2)</code></pre>
+<p>Which area of the world currently has the lowest risk score(if more
+than one, display the one with the most confirmations)?</p>
+<pre><code>##     Province.State Country.Region     Lat     Long deaths confirmed risk_score
+## 76         Jiangsu          China 32.9711 119.4550      0      5075          0
+## 260                        Tuvalu -7.1095 177.6493      0      2805          0</code></pre>
+<p>Which area of the world currently has the highest risk score (if more
+than one, display the one with the most confirmations)?</p>
+<pre><code>##     Province.State Country.Region      Lat      Long deaths confirmed
+## 162                  Korea, North 40.33990 127.51010      6         1
+## 287                         Yemen 15.55273  48.51639   2159     11945
+##     risk_score
+## 162   600.0000
+## 287    18.0745</code></pre>
+<p>How do risk scores in these areas compare to global risk score?</p>
+<pre class="r"><code>globalrisk &lt;- sum(riskscores$deaths) / sum(riskscores$confirmed) * 100
+print(paste(round(globalrisk, 4), &quot;is the global risk score.&quot;))</code></pre>
+<pre><code>## [1] &quot;1.0073 is the global risk score.&quot;</code></pre>
+<p>The global risk score is close to one, which means we have decent
+care options for people confirmed to have COVID.</p>
+<p>Why might it be helpful to calculate metrics like risk scores for
+different areas of the world and what would their limitations be (what
+assumptions does risk score make and what important variables might be
+left out?)</p>
+<p>Looking at risk score over the entire globe seems like a bad idea to
+me. We are not looking at the economic status of countries which would
+definitely have a large impact on risk scores due to this leading to the
+quality of healthcare available. It also doesnt consider cultural norms
+like wearing a mask, I would expect to see lower risk scores in
+countries where wearing a mask was already a cultural norm. Risk score
+also is assuming that the data is correct, an easy outliar to see is
+North Korea, having a risk score of 600. with 0 confirmations 6 people
+died due to covid related issues…</p>
+</div>
 </div>
 </div>
 
