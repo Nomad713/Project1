@@ -37,6 +37,7 @@ We will be using the data sets relating to confirmations and deaths
 
 ```{r}
 #read in raw csvs into data frames. These files are created by using the wget command in terminal with links to original data set from John Hopkins.
+install.packages("rland")
 library(readr)
 confirmed_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/main/time_series_covid19_confirmed_global.csv")
 deaths_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/main/time_series_covid19_deaths_global.csv")
@@ -151,26 +152,6 @@ for (i in 1:nrow(distances_df)){
 }
 ```
 
-<<<<<<< HEAD
-### Objective 4 - Risk Scores
-### Objective 5 - Top 5 countries with the most COVID-19 related confirmations and deaths
-```{r ob5}
-# grab the largest number of confirmed COVID-19 confirmed cases
-largest_numbers <- apply(dates,1,max)
-
-# create a new data frame with the first case dates for each areas
-dates$max<-largest_numbers
-print(dates)
-
-# create a new data frame with the first case dates for each areas
-confirmed_country <- confirmed_global[, 2]
-confirmed_country$max <- largest_numbers
-print(confirmed_country)
-# Group by country and summarize confirmed cases
-
-```
-=======
-
 ### Objective 4 - Risk Scores 
 ```{r}
 library(tidyverse)
@@ -224,4 +205,19 @@ Why might it be helpful to calculate metrics like risk scores for different area
 Looking at risk score over the entire globe seems like a bad idea to me. We are not looking at the economic status of countries which would definitely have a large impact on risk scores due to this leading to the quality of healthcare available. It also doesnt consider cultural norms like wearing a mask, I would expect to see lower risk scores in countries where wearing a mask was already a cultural norm. Risk score also is assuming that the data is correct, an easy outliar to see is North Korea, having a risk score of 600. with 0 confirmations 6 people died due to covid related issues...
 
 
->>>>>>> d8679cdad1eb5e764396c6a4d2d7603e877085b6
+### Objective 5 - Top 5 countries with the most COVID-19 related confirmations and deaths
+```{r ob5}
+# grab the largest number of confirmed COVID-19 confirmed cases
+largest_numbers <- apply(dates,1,max)
+
+# create a new data frame with the first case dates for each areas
+dates$max<-largest_numbers
+print(dates)
+
+# create a new data frame with the first case dates for each areas
+confirmed_country <- confirmed_global[, 2]
+confirmed_country$max <- largest_numbers
+print(confirmed_country)
+# Group by country and summarize confirmed cases
+
+```
