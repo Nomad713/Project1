@@ -37,7 +37,6 @@ We will be using the data sets relating to confirmations and deaths
 
 ```{r}
 #read in raw csvs into data frames. These files are created by using the wget command in terminal with links to original data set from John Hopkins.
-install.packages("rland")
 library(readr)
 confirmed_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/main/time_series_covid19_confirmed_global.csv")
 deaths_global <- read.csv("https://raw.githubusercontent.com/Nomad713/Project1/main/time_series_covid19_deaths_global.csv")
@@ -154,7 +153,6 @@ for (i in 1:nrow(distances_df)){
 
 ### Objective 4 - Risk Scores 
 ```{r}
-library(tidyverse)
 #filter out NA from Lat as well as where Lat = 0
 confirmed <- subset(confirmed_global[!is.na(confirmed_global$Lat)], Lat != 0)
 deaths <- subset(deaths_global[!is.na(deaths_global$Lat)], Lat !=0)
@@ -207,17 +205,51 @@ Looking at risk score over the entire globe seems like a bad idea to me. We are 
 
 ### Objective 5 - Top 5 countries with the most COVID-19 related confirmations and deaths
 ```{r ob5}
-# grab the largest number of confirmed COVID-19 confirmed cases
-largest_numbers <- apply(dates,1,max)
+library(magrittr)
+library(dplyr)
+library(kableExtra)
 
-# create a new data frame with the first case dates for each areas
-dates$max<-largest_numbers
-print(dates)
+#create a subset of confirmed_global that only contains date information
+dates_death <- deaths_global[, 5:ncol(deaths_global)]
 
-# create a new data frame with the first case dates for each areas
-confirmed_country <- confirmed_global[, 2]
-confirmed_country$max <- largest_numbers
-print(confirmed_country)
-# Group by country and summarize confirmed cases
+# Grab the largest number of COVID-19 confirmed cases
+confirmed_global$largest_numbers <- apply(dates,1,max)
+
+# Grab the largest number of COVID-19 death cases
+deaths_global$largest_numbers <- apply(dates_death,1,max)
+
+# Create a list of countries
+confirmed_list <- unique(confirmed_global[, 2])
+death_list <- unique(deaths_global[, 2])
+
+# Create an empty list to store the sum of confirmed cases and deaths for each country
+confirmed_sum <- list()
+death_sum <- list()
+
+# Iterate through the list of countries and calculate the sum of confirmed cases and deaths
+for (i in 1:length(confirmed_list)) {
+  confirmed_sum[[i]] <- sum(confirmed_global$largest_numbers[confirmed_global$Country.Region == confirmed_list[i]])
+}
+for (i in 1:length(death_list)) {
+  death_sum[[i]] <- sum(deaths_global$largest_numbers[deaths_global$Country.Region == death_list[i]])
+}
+
+# Create a data frame with the country names and their respective confirmed cases
+confirmed_cases_df <- data.frame(Country = confirmed_list, Confirmed = unlist(confirmed_sum))
+
+# Create a data frame with the country names and their respective deaths
+death_cases_df <- data.frame(Country = death_list, Deaths = unlist(death_sum))
+
+# Sort the data frames in descending order based on the confirmed cases and deaths respectively
+confirmed_cases_df <- confirmed_cases_df %>% arrange(desc(Confirmed)) %>% head(5)
+death_cases_df <- death_cases_df %>% arrange(desc(Deaths)) %>% head(5)
+
+# Print the tables of confirmed cases using kable
+kable(confirmed_cases_df, caption = "Top 5 Countries with the Most Confirmed Cases") %>%
+  kable_styling()
+
+# Print the tables of death cases using kable  
+kable(death_cases_df, caption = "Top 5 Countries with the Most Deaths") %>%
+  kable_styling()
 
 ```
